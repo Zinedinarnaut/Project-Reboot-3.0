@@ -856,40 +856,37 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 #ifndef ABOVE_S20
 		if (Globals::AmountOfListens == 1) // we only want to do this one time.
 		{
-			if (bEnableRebooting)
-			{
-				auto GameSessionDedicatedAthenaPatch = Memcury::Scanner::FindPattern("3B 41 38 7F ? 48 8B D0 48 8B 41 30 4C 39 04 D0 75 ? 48 8D 96", false).Get(); // todo check this sig more
+			auto GameSessionDedicatedAthenaPatch = Memcury::Scanner::FindPattern("3B 41 38 7F ? 48 8B D0 48 8B 41 30 4C 39 04 D0 75 ? 48 8D 96", false).Get(); // todo check this sig more
 
-				if (GameSessionDedicatedAthenaPatch)
+			if (GameSessionDedicatedAthenaPatch)
+			{
+				PatchBytes(GameSessionDedicatedAthenaPatch, { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
+			}
+			else
+			{
+				auto S19Patch = Memcury::Scanner::FindPattern("74 1A 48 8D 97 ? ? ? ? 49 8B CF E8 ? ? ? ? 88 87 ? ? ? ? E9", false).Get();
+				
+				if (S19Patch)
 				{
-					PatchBytes(GameSessionDedicatedAthenaPatch, { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
+					PatchByte(S19Patch, 0x75);
 				}
 				else
 				{
-					auto S19Patch = Memcury::Scanner::FindPattern("74 1A 48 8D 97 ? ? ? ? 49 8B CF E8 ? ? ? ? 88 87 ? ? ? ? E9", false).Get();
-					
-					if (S19Patch)
-					{
-						PatchByte(S19Patch, 0x75);
-					}
-					else
-					{
-						auto S18Patch = Memcury::Scanner::FindPattern("75 02 33 F6 41 BE ? ? ? ? 48 85 F6 74 17 48 8D 93").Get();
+					auto S18Patch = Memcury::Scanner::FindPattern("75 02 33 F6 41 BE ? ? ? ? 48 85 F6 74 17 48 8D 93").Get();
 
-						if (S18Patch)
-						{
-							PatchByte(S18Patch, 0x74);
-						}
+					if (S18Patch)
+					{
+						PatchByte(S18Patch, 0x74);
 					}
 				}
-
-				if (bEnableRebooting)
-				{
-					HookInstruction(Addresses::RebootingDelegate, (PVOID)ABuildingGameplayActorSpawnMachine::RebootingDelegateHook, "/Script/Engine.PlayerController.SetVirtualJoystickVisibility", ERelativeOffsets::LEA, FindObject("/Script/FortniteGame.Default__BuildingGameplayActorSpawnMachine"));
-				}
-
-				LOG_INFO(LogDev, "Patched GameSession!");
 			}
+
+			if (bEnableRebooting)
+			{
+				HookInstruction(Addresses::RebootingDelegate, (PVOID)ABuildingGameplayActorSpawnMachine::RebootingDelegateHook, "/Script/Engine.PlayerController.SetVirtualJoystickVisibility", ERelativeOffsets::LEA, FindObject("/Script/FortniteGame.Default__BuildingGameplayActorSpawnMachine"));
+			}
+
+			LOG_INFO(LogDev, "Patched GameSession!");
 		}
 
 		if (auto TeamsArrayContainer = GameState->GetTeamsArrayContainer())
