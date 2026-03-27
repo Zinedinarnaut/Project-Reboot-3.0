@@ -115,18 +115,11 @@ static __int64 DispatchRequestHook(__int64 a1, __int64* a2, int a3)
     if (Globals::bNoMCP)
         return DispatchRequestOriginal(a1, a2, a3);
 
-    // Legacy chapter 1 (notably 3.1) can freeze/disconnect when MCP requests are
-    // dispatched as dedicated-server commands. Force a client-context dispatch.
-    const bool bForceLegacyClientDispatch = (Engine_Version <= 422 && Fortnite_Version >= 3.0 && Fortnite_Version < 4.0);
-    const int DispatchType = bForceLegacyClientDispatch ? 0 : 3;
-
-    static bool bLoggedDispatchConfig = false;
-    if (!bLoggedDispatchConfig)
-    {
-        LOG_INFO(LogDev, "DispatchRequestHook config: Fortnite_Version={} Engine_Version={} incoming_a3={} dispatchType={}",
-            Fortnite_Version, Engine_Version, a3, DispatchType);
-        bLoggedDispatchConfig = true;
-    }
+    // Legacy chapter 1 (notably 3.1) can freeze/disconnect when we force
+    // dedicated-server dispatch type. Keep the game's original dispatch type
+    // there, and keep the existing force-dedicated behavior for newer builds.
+    const bool bKeepOriginalDispatchType = (Engine_Version <= 422 && Fortnite_Version >= 3.0 && Fortnite_Version < 4.0);
+    const int DispatchType = bKeepOriginalDispatchType ? a3 : 3;
 
     if (Engine_Version >= 423)
         return DispatchRequestOriginal(a1, a2, DispatchType); 
