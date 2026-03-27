@@ -115,8 +115,14 @@ static __int64 DispatchRequestHook(__int64 a1, __int64* a2, int a3)
     if (Globals::bNoMCP)
         return DispatchRequestOriginal(a1, a2, a3);
 
+    // Legacy chapter 1 (notably 3.1) can freeze/disconnect when we force
+    // dedicated-server dispatch type. Keep the game's original dispatch type
+    // there, and keep the existing force-dedicated behavior for newer builds.
+    const bool bKeepOriginalDispatchType = (Engine_Version <= 422 && Fortnite_Version >= 3.0 && Fortnite_Version < 4.0);
+    const int DispatchType = bKeepOriginalDispatchType ? a3 : 3;
+
     if (Engine_Version >= 423)
-        return DispatchRequestOriginal(a1, a2, 3); 
+        return DispatchRequestOriginal(a1, a2, DispatchType); 
 
     // LOG_INFO(LogDev, "Dispatch Request!");
 
@@ -124,14 +130,14 @@ static __int64 DispatchRequestHook(__int64 a1, __int64* a2, int a3)
 
     // Legacy chapter 1 builds can differ on the dedicated-server field offset.
     // We set the discovered offset and a conservative legacy fallback to improve compatibility.
-    *(int*)(__int64(a2) + Offset) = 3;
+    *(int*)(__int64(a2) + Offset) = DispatchType;
 
-    if (Engine_Version <= 422 && Fortnite_Version < 4.2 && Offset != 0x28)
+    if (DispatchType == 3 && Engine_Version <= 422 && Fortnite_Version < 4.2 && Offset != 0x28)
     {
         *(int*)(__int64(a2) + 0x28) = 3;
     }
 
-    return DispatchRequestOriginal(a1, a2, 3);
+    return DispatchRequestOriginal(a1, a2, DispatchType);
 }
 
 static bool (*CanCreateInCurrentContextOriginal)(UObject* Template);
