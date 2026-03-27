@@ -122,7 +122,14 @@ static __int64 DispatchRequestHook(__int64 a1, __int64* a2, int a3)
 
     static auto Offset = FindMcpIsDedicatedServerOffset();
 
+    // Legacy chapter 1 builds can differ on the dedicated-server field offset.
+    // We set the discovered offset and a conservative legacy fallback to improve compatibility.
     *(int*)(__int64(a2) + Offset) = 3;
+
+    if (Engine_Version <= 422 && Fortnite_Version < 4.2 && Offset != 0x28)
+    {
+        *(int*)(__int64(a2) + 0x28) = 3;
+    }
 
     return DispatchRequestOriginal(a1, a2, 3);
 }
