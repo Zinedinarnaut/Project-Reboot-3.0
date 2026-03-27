@@ -1,9 +1,17 @@
 #include "FortPlayerPawnAthena.h"
 #include "FortInventory.h"
 #include "FortPlayerControllerAthena.h"
+#include "globals.h"
 
 void AFortPlayerPawnAthena::OnCapsuleBeginOverlapHook(UObject* Context, FFrame* Stack, void* Ret)
 {
+	// On older chapter 1 builds (notably 3.1), custom stack parsing here can
+	// corrupt execution and crash the host shortly after the loading screen.
+	if (Fortnite_Version <= 3.3)
+	{
+		return OnCapsuleBeginOverlapOriginal(Context, Stack, Ret);
+	}
+
 	using UPrimitiveComponent = UObject;
 
 	auto Pawn = (AFortPlayerPawnAthena*)Context;
@@ -51,5 +59,5 @@ void AFortPlayerPawnAthena::OnCapsuleBeginOverlapHook(UObject* Context, FFrame* 
 		}
 	}
 
-	// return OnCapsuleBeginOverlapOriginal(Context, Stack, Ret); // we love explicit
+	return OnCapsuleBeginOverlapOriginal(Context, Stack, Ret);
 }
