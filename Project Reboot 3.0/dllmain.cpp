@@ -113,45 +113,12 @@ static __int64 ConstructEmptyQueryInfoHook(FEncounterEnvironmentQueryInfo* a1)
 
 static __int64 (*DispatchRequestOriginal)(__int64 a1, __int64* a2, int a3);
 
-static bool IsLikelyHostProcess()
-{
-    static int Cached = -1;
-    if (Cached != -1)
-        return Cached == 1;
-
-    auto CmdLine = GetCommandLineA();
-    if (!CmdLine)
-    {
-        Cached = 0;
-        return false;
-    }
-
-    std::string LowerCmd(CmdLine);
-    std::transform(LowerCmd.begin(), LowerCmd.end(), LowerCmd.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-
-    const bool bHostArgsPresent =
-        LowerCmd.find("-nullrhi") != std::string::npos ||
-        LowerCmd.find("-nosound") != std::string::npos ||
-        LowerCmd.find("host@projectreboot.dev") != std::string::npos;
-
-    Cached = bHostArgsPresent ? 1 : 0;
-    LOG_INFO(LogDev, "Host-mode dispatch heuristic: {}", bHostArgsPresent ? "enabled" : "disabled");
-    return bHostArgsPresent;
-}
-
 static __int64 DispatchRequestHook(__int64 a1, __int64* a2, int a3)
 {
     if (Globals::bNoMCP)
         return DispatchRequestOriginal(a1, a2, a3);
 
-    // Legacy chapter 1 (notably 3.1) can freeze/disconnect when we force
-    // dedicated-server dispatch type. Keep the game's original dispatch type
-    // there for playable clients, and force dedicated dispatch for host/headless.
-    const bool bKeepOriginalDispatchType = (Engine_Version <= 422 && Fortnite_Version >= 3.0 && Fortnite_Version < 4.0);
-    const bool bForceDedicatedDispatch = !bKeepOriginalDispatchType || IsLikelyHostProcess();
-    const int DispatchType = bForceDedicatedDispatch ? 3 : a3;
+    const int DispatchType = 3;
 
     if (Engine_Version >= 423)
         return DispatchRequestOriginal(a1, a2, DispatchType); 
