@@ -270,6 +270,7 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PlayerState.cpp" />
     <ClCompile Include="reboot.cpp" />
+    <ClCompile Include="runtime\boot_config.cpp" />
     <ClCompile Include="SavePackage.cpp" />
     <ClCompile Include="ScriptDisassembler.cpp" />
     <ClCompile Include="Texture2D.cpp" />
@@ -476,6 +477,7 @@
     <ClInclude Include="RemoveReference.h" />
     <ClInclude Include="ReversePredicate.h" />
     <ClInclude Include="Rotator.h" />
+    <ClInclude Include="runtime\boot_config.h" />
     <ClInclude Include="ScriptDelegates.h" />
     <ClInclude Include="ScriptDisassembler.h" />
     <ClInclude Include="ScriptInterface.h" />
