@@ -265,6 +265,9 @@
     <ClCompile Include="reboot.cpp">
       <Filter>Reboot\Private</Filter>
     </ClCompile>
+    <ClCompile Include="runtime\boot_config.cpp">
+      <Filter>Reboot\Private</Filter>
+    </ClCompile>
     <ClCompile Include="FortGameSessionDedicatedAthena.cpp">
       <Filter>FortniteGame\Source\FortniteGame\Private\Athena</Filter>
     </ClCompile>
@@ -541,6 +544,9 @@
       <Filter>Reboot\Public</Filter>
     </ClInclude>
     <ClInclude Include="reboot.h">
+      <Filter>Reboot\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\boot_config.h">
       <Filter>Reboot\Public</Filter>
     </ClInclude>
     <ClInclude Include="events.h">

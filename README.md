@@ -24,6 +24,31 @@ Below are the key points about this project:
 1. Clone this repository: `git clone https://github.com/Milxnor/Project-Reboot-3.0.git`
 2. Build the project using your preferred build tools. (Use Visual Studio 2022)
 3. Run the server using the Reboot Launcher.
+
+## Runtime Profiles (New)
+
+Project Reboot now supports runtime configuration for dedicated/headless hosting without changing source constants.
+
+- `PR_PROFILE`: `br`, `stw`, `creative`, `event`
+- `PR_MODE`: `gui`, `interactive`, `headless`, `host`, `dedicated`
+- `PR_GUI`: `1` or `0`
+- `PR_HEADLESS`: `1` or `0`
+- `PR_NO_MCP`: `1` or `0`
+- `PR_PLAYLIST`: full playlist asset path override
+- `PR_STARTUP_DELAY`: integer seconds
+- `PR_BOTS`: integer bot count
+- `PR_WARMUP_PLAYERS`: integer player count
+- `PR_AUTO_START_PLAYERS`: integer player count
+- `PR_DISABLE_VERBOSE_FORT_LOGS`: `1` or `0`
+
+Command-line overrides are also supported:
+- `-pr-profile=stw`
+- `-pr-mode=headless`
+- `-pr-no-mcp=1`
+- `-pr-playlist=/Game/...`
+
+For more detail and host examples, see [docs/runtime_profiles.md](docs/runtime_profiles.md).
+
 ## Contributing
 
 Contributions are welcome! Feel free to create pull requests or report issues on the GitHub repository.
